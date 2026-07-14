@@ -230,6 +230,26 @@ func TestBuildWeekdayOnly(t *testing.T) {
 	}
 }
 
+func TestBuildNumericWeekday(t *testing.T) {
+	// A numeric weekday (Sunday = 1) must land in the weekday slot, not the hour.
+	cases := []struct {
+		fields BuildFields
+		canon  string
+	}{
+		{BuildFields{Weekday: "3"}, "*/*/* Tuesday *:*:00"},
+		{BuildFields{Weekday: "3", Hour: "9"}, "*/*/* Tuesday 09:00:00"},
+		{BuildFields{Weekday: "2-6", Hour: "9"}, "*/*/* Monday-Friday 09:00:00"},
+		{BuildFields{Weekday: "1,7"}, "*/*/* Sunday,Saturday *:*:00"},
+		{BuildFields{Weekday: "M,W,F"}, "*/*/* Monday,Wednesday,Friday *:*:00"},
+	}
+	for _, c := range cases {
+		v, _, err := Build(c.fields)
+		if err != nil || v.Canonical != c.canon {
+			t.Fatalf("Build(%+v) = %q, %v; want %q", c.fields, v.Canonical, err, c.canon)
+		}
+	}
+}
+
 func TestDerivePrev(t *testing.T) {
 	occ, err := Derive("6", mustTime(t, "2026-07-14T07:00:00Z"), 1, false)
 	if err != nil || len(occ) != 1 || !occ[0].Equal(mustTime(t, "2026-07-14T06:00:00Z")) {
