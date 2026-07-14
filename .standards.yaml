@@ -1,0 +1,4 @@
+# Anti-rot exemption ledger (nicerobot/tools.build/standards/capabilities.yaml).
+# Exemptions must shrink toward zero.
+exempt:
+  artifact:makefile: "bespoke gate over owned packages only, excluding the committed generated ANTLR tree (internal/isnowgrammar); the shared Makefile runs `go vet ./...` which cannot exclude it. Same rationale as sibling up.go. See specs/decisions/003-generated-tree.md."

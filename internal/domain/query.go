@@ -1,0 +1,51 @@
+// Package domain holds the pure command logic over the isnow library; it takes
+// its clock and effects injected so every path is testable.
+package domain
+
+import (
+	"time"
+
+	isnow "github.com/uplang/isnow.go"
+)
+
+// Verdict is the outcome of the membership test.
+type Verdict struct {
+	Holds     bool
+	Canonical string
+	Explain   string
+}
+
+// Query parses src and tests whether it holds at the instant.
+func Query(src string, at time.Time) (Verdict, error) {
+	p, err := isnow.Parse(src)
+	if err != nil {
+		return Verdict{}, err
+	}
+	return Verdict{Holds: p.Holds(at), Canonical: p.Canonical(), Explain: p.Explain()}, nil
+}
+
+// Derive returns up to n occurrences after (forward) or before from.
+func Derive(src string, from time.Time, n int, forward bool) ([]time.Time, error) {
+	p, err := isnow.Parse(src)
+	if err != nil {
+		return nil, err
+	}
+	out := make([]time.Time, 0, n)
+	cur := from
+	for len(out) < n {
+		next, ok := advance(p, cur, forward)
+		if !ok {
+			break
+		}
+		out = append(out, next)
+		cur = next
+	}
+	return out, nil
+}
+
+func advance(p isnow.Pattern, from time.Time, forward bool) (time.Time, bool) {
+	if forward {
+		return p.Next(from)
+	}
+	return p.Prev(from)
+}
