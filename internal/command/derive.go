@@ -23,13 +23,13 @@ func deriveCommand(env *app.Env, name string, forward bool) *cli.Command {
 			instantFlag("from", &from),
 			tzFlag(&tz),
 		},
-		Action: func(_ context.Context, c *cli.Command) error {
-			return runDerive(env, c, from, tz, forward)
+		Action: func(ctx context.Context, c *cli.Command) error {
+			return runDerive(ctx, env, c, from, tz, forward)
 		},
 	}
 }
 
-func runDerive(env *app.Env, c *cli.Command, from, tz string, forward bool) error {
+func runDerive(ctx context.Context, env *app.Env, c *cli.Command, from, tz string, forward bool) error {
 	src, err := firstArg(c)
 	if err != nil {
 		return err
@@ -38,7 +38,7 @@ func runDerive(env *app.Env, c *cli.Command, from, tz string, forward bool) erro
 	if err != nil {
 		return err
 	}
-	occ, err := domain.Derive(src, instant, int(c.Int("count")), forward)
+	occ, err := domain.Derive(ctx, src, instant, int(c.Int("count")), forward)
 	if err != nil {
 		return err
 	}

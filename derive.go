@@ -1,6 +1,9 @@
 package isnow
 
-import "time"
+import (
+	"context"
+	"time"
+)
 
 // horizonYears bounds an unbounded search so a pattern with no occurrence
 // terminates (specs/contracts/library-api.md).
@@ -9,21 +12,40 @@ const horizonYears = 100
 // Next returns the earliest occurrence strictly after from, or false when none
 // exists within the pattern's window or the 100-year horizon.
 func (p Pattern) Next(from time.Time) (time.Time, bool) {
-	return p.derive(from, true)
+	t, ok, _ := p.deriveCtx(context.Background(), from, true)
+	return t, ok
 }
 
 // Prev returns the latest occurrence strictly before from, or false when none.
 func (p Pattern) Prev(from time.Time) (time.Time, bool) {
-	return p.derive(from, false)
+	t, ok, _ := p.deriveCtx(context.Background(), from, false)
+	return t, ok
 }
 
-func (p Pattern) derive(from time.Time, forward bool) (time.Time, bool) {
+// NextContext is Next with cancellation: the search aborts and returns ctx's
+// error when the context is done, so an unbounded scan on a pathological
+// pattern (e.g. an impossible bounded window) cannot pin a CPU indefinitely.
+// The context is checked once per civil day, bounding a cancelled search to at
+// most a single day's enumeration.
+func (p Pattern) NextContext(ctx context.Context, from time.Time) (time.Time, bool, error) {
+	return p.deriveCtx(ctx, from, true)
+}
+
+// PrevContext is Prev with cancellation (see NextContext).
+func (p Pattern) PrevContext(ctx context.Context, from time.Time) (time.Time, bool, error) {
+	return p.deriveCtx(ctx, from, false)
+}
+
+func (p Pattern) deriveCtx(ctx context.Context, from time.Time, forward bool) (time.Time, bool, error) {
 	for day := truncateDay(from); !beyondHorizon(from, day, forward); day = day.AddDate(0, 0, direction(forward)) {
+		if err := ctx.Err(); err != nil {
+			return time.Time{}, false, err
+		}
 		if inst, ok := p.dayMatch(day, from, forward); ok {
-			return inst, true
+			return inst, true, nil
 		}
 	}
-	return time.Time{}, false
+	return time.Time{}, false, nil
 }
 
 func direction(forward bool) int {

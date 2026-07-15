@@ -24,6 +24,29 @@ func get(t *testing.T, h http.Handler, path string) *httptest.ResponseRecorder {
 	return rec
 }
 
+// getCtx issues a request whose context is already cancelled, so the derivation
+// budget trips immediately.
+func getCtx(t *testing.T, h http.Handler, path string) *httptest.ResponseRecorder {
+	t.Helper()
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, path, nil).WithContext(ctx))
+	return rec
+}
+
+// TestDerivationBudgetTripsToTimeout guards the server DoS fix: a cancelled or
+// timed-out search maps to 504 for next/prev/wait rather than pinning a core.
+func TestDerivationBudgetTripsToTimeout(t *testing.T) {
+	h := newServer()
+	if rec := getCtx(t, h, "/v1/next/6?from=2026-07-14T07:00:00Z"); rec.Code != http.StatusGatewayTimeout {
+		t.Fatalf("next (cancelled) = %d, want 504", rec.Code)
+	}
+	if rec := getCtx(t, h, "/v1/wait/6?timeout=1s"); rec.Code != http.StatusGatewayTimeout {
+		t.Fatalf("wait (cancelled) = %d, want 504", rec.Code)
+	}
+}
+
 func TestStatusEndpoint(t *testing.T) {
 	h := newServer()
 	if rec := get(t, h, "/v1/is/6?at=2026-01-01T06:00:00Z"); rec.Code != http.StatusNoContent {

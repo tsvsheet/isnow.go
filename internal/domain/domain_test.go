@@ -32,17 +32,17 @@ func TestQuery(t *testing.T) {
 }
 
 func TestDerive(t *testing.T) {
-	occ, err := Derive("6", mustTime(t, "2026-07-14T07:00:00Z"), 2, true)
+	occ, err := Derive(context.Background(), "6", mustTime(t, "2026-07-14T07:00:00Z"), 2, true)
 	if err != nil || len(occ) != 2 {
 		t.Fatalf("Derive = %v, %v", occ, err)
 	}
-	if _, err := Derive("25", time.Now(), 1, true); !errors.Is(err, isnow.ErrRange) {
+	if _, err := Derive(context.Background(), "25", time.Now(), 1, true); !errors.Is(err, isnow.ErrRange) {
 		t.Fatalf("Derive(bad) = %v", err)
 	}
 }
 
 func TestDeriveStopsWhenExhausted(t *testing.T) {
-	occ, err := Derive("12 <2016", mustTime(t, "2020-01-01T00:00:00Z"), 3, true)
+	occ, err := Derive(context.Background(), "12 <2016", mustTime(t, "2020-01-01T00:00:00Z"), 3, true)
 	if err != nil || len(occ) != 0 {
 		t.Fatalf("Derive exhausted = %v, %v", occ, err)
 	}
@@ -251,7 +251,7 @@ func TestBuildNumericWeekday(t *testing.T) {
 }
 
 func TestDerivePrev(t *testing.T) {
-	occ, err := Derive("6", mustTime(t, "2026-07-14T07:00:00Z"), 1, false)
+	occ, err := Derive(context.Background(), "6", mustTime(t, "2026-07-14T07:00:00Z"), 1, false)
 	if err != nil || len(occ) != 1 || !occ[0].Equal(mustTime(t, "2026-07-14T06:00:00Z")) {
 		t.Fatalf("Derive prev = %v, %v", occ, err)
 	}

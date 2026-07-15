@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"time"
@@ -21,7 +22,11 @@ func (s *Server) handleWait(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	now := s.now()
-	next, has := p.Next(now)
+	next, has, err := s.nextWithin(r, p, now)
+	if err != nil {
+		writeDeriveError(w, err)
+		return
+	}
 	if !has || next.Sub(now) > timeout {
 		s.waitThenExpire(w, r, has, timeout)
 		return
@@ -30,6 +35,14 @@ func (s *Server) handleWait(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusNoContent)
+}
+
+// nextWithin derives the next occurrence under the derivation time budget, so a
+// wait/watch on a pathological pattern cannot pin a core.
+func (s *Server) nextWithin(r *http.Request, p patternNext, now time.Time) (time.Time, bool, error) {
+	ctx, cancel := context.WithTimeout(r.Context(), deriveBudget)
+	defer cancel()
+	return p.NextContext(ctx, now)
 }
 
 // waitThenExpire sleeps out the timeout (when there is no in-window occurrence)
@@ -61,8 +74,8 @@ func (s *Server) handleWatch(w http.ResponseWriter, r *http.Request) {
 func (s *Server) streamOccurrences(r *http.Request, w http.ResponseWriter, flusher http.Flusher, p patternNext) {
 	for {
 		now := s.now()
-		next, has := p.Next(now)
-		if !has {
+		next, has, err := s.nextWithin(r, p, now)
+		if err != nil || !has {
 			return
 		}
 		if err := s.sleep(r.Context(), next.Sub(now)); err != nil {
@@ -75,7 +88,7 @@ func (s *Server) streamOccurrences(r *http.Request, w http.ResponseWriter, flush
 
 // patternNext is the derivation slice of a Pattern the stream needs.
 type patternNext interface {
-	Next(from time.Time) (time.Time, bool)
+	NextContext(ctx context.Context, from time.Time) (time.Time, bool, error)
 }
 
 func timeoutOr400(w http.ResponseWriter, r *http.Request) (time.Duration, bool) {

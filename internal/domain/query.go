@@ -3,6 +3,7 @@
 package domain
 
 import (
+	"context"
 	"time"
 
 	isnow "github.com/uplang/isnow.go"
@@ -24,8 +25,10 @@ func Query(src string, at time.Time) (Verdict, error) {
 	return Verdict{Holds: p.Holds(at), Canonical: p.Canonical(), Explain: p.Explain()}, nil
 }
 
-// Derive returns up to n occurrences after (forward) or before from.
-func Derive(src string, from time.Time, n int, forward bool) ([]time.Time, error) {
+// Derive returns up to n occurrences after (forward) or before from. It stops
+// and returns ctx's error if the context is cancelled, so a caller can bound an
+// unbounded search on a pathological pattern.
+func Derive(ctx context.Context, src string, from time.Time, n int, forward bool) ([]time.Time, error) {
 	p, err := isnow.Parse(src)
 	if err != nil {
 		return nil, err
@@ -33,7 +36,10 @@ func Derive(src string, from time.Time, n int, forward bool) ([]time.Time, error
 	out := make([]time.Time, 0, n)
 	cur := from
 	for len(out) < n {
-		next, ok := advance(p, cur, forward)
+		next, ok, err := advance(ctx, p, cur, forward)
+		if err != nil {
+			return nil, err
+		}
 		if !ok {
 			break
 		}
@@ -43,9 +49,9 @@ func Derive(src string, from time.Time, n int, forward bool) ([]time.Time, error
 	return out, nil
 }
 
-func advance(p isnow.Pattern, from time.Time, forward bool) (time.Time, bool) {
+func advance(ctx context.Context, p isnow.Pattern, from time.Time, forward bool) (time.Time, bool, error) {
 	if forward {
-		return p.Next(from)
+		return p.NextContext(ctx, from)
 	}
-	return p.Prev(from)
+	return p.PrevContext(ctx, from)
 }

@@ -1,6 +1,8 @@
 package server
 
 import (
+	"context"
+	"errors"
 	"net/http"
 	"strconv"
 	"time"
@@ -10,6 +12,10 @@ import (
 
 // maxN caps derivation requests.
 const maxN = 1000
+
+// deriveBudget bounds the CPU a single derivation request may spend, so a
+// pathological pattern (e.g. an impossible bounded window) cannot pin a core.
+const deriveBudget = 5 * time.Second
 
 func (s *Server) handleIs(w http.ResponseWriter, r *http.Request) {
 	p, ok := parsePattern(w, isnowOf(r))
@@ -55,14 +61,26 @@ func (s *Server) derive(w http.ResponseWriter, r *http.Request, forward bool) {
 	if !ok {
 		return
 	}
-	occ, err := domain.Derive(src, from, n, forward)
+	ctx, cancel := context.WithTimeout(r.Context(), deriveBudget)
+	defer cancel()
+	occ, err := domain.Derive(ctx, src, from, n, forward)
 	if err != nil {
-		writeError(w, http.StatusBadRequest, isnowCode(err), err.Error())
+		writeDeriveError(w, err)
 		return
 	}
 	writeJSON(w, http.StatusOK, occurrencesBody{
 		Isnow: src, Canonical: canonOf(src), Occurrences: formatInstants(occ),
 	})
+}
+
+// writeDeriveError maps a cancelled/timed-out search to 504 and a parse fault
+// to 400.
+func writeDeriveError(w http.ResponseWriter, err error) {
+	if errors.Is(err, context.DeadlineExceeded) || errors.Is(err, context.Canceled) {
+		writeError(w, http.StatusGatewayTimeout, "timeout", "derivation exceeded the time budget")
+		return
+	}
+	writeError(w, http.StatusBadRequest, isnowCode(err), err.Error())
 }
 
 func (s *Server) handleCanon(w http.ResponseWriter, r *http.Request) {
