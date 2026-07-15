@@ -7,7 +7,16 @@ import "time"
 // (at.Location()) and truncated to whole seconds.
 func (p Pattern) Holds(at time.Time) bool {
 	c := newCtx(at)
-	return p.fieldsHold(c) && p.boundsHold(c) && p.intervalsHold(c)
+	return p.fieldsHold(c) && p.boundsHold(c) && p.intervalsHold(c) && p.notExcluded(c)
+}
+
+func (p Pattern) notExcluded(c instantCtx) bool {
+	for _, e := range p.exclusions {
+		if e.excludes(c) {
+			return false
+		}
+	}
+	return true
 }
 
 func (p Pattern) intervalsHold(c instantCtx) bool {

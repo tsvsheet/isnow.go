@@ -11,6 +11,11 @@ func validateUnits(raw rawPattern) error {
 			return err
 		}
 	}
+	for _, ex := range raw.exclusions {
+		if err := groupsUnits(ex); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 

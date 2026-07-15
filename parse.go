@@ -73,11 +73,13 @@ type rawBound struct {
 	groups []rawGroup
 }
 
-// rawPattern is the whole parse: the main groups, any bounds, and any intervals.
+// rawPattern is the whole parse: the main groups, any bounds, intervals, and
+// pattern-level exclusions (each a sub-spec of groups).
 type rawPattern struct {
-	groups    []rawGroup
-	bounds    []rawBound
-	intervals []*rawIncr
+	groups     []rawGroup
+	bounds     []rawBound
+	intervals  []*rawIncr
+	exclusions [][]rawGroup
 }
 
 // errListener records the first syntax error so parsing yields ErrSyntax rather
@@ -114,10 +116,19 @@ func parseRaw(src string) (rawPattern, error) {
 	}
 	groups, intervals := extractIntervals(specGroups(tree.Spec()))
 	return rawPattern{
-		groups:    groups,
-		bounds:    bounds(tree.AllBound()),
-		intervals: intervals,
+		groups:     groups,
+		bounds:     bounds(tree.AllBound()),
+		intervals:  intervals,
+		exclusions: exclusions(tree.AllExclusion()),
 	}, nil
+}
+
+func exclusions(ctxs []g.IExclusionContext) [][]rawGroup {
+	out := make([][]rawGroup, len(ctxs))
+	for i, ctx := range ctxs {
+		out[i] = specGroups(ctx.Spec())
+	}
+	return out
 }
 
 // extractIntervals pulls out the bare interval groups (`+[90mn]`, `+[10d]`, …)

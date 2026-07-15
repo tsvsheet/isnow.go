@@ -13,13 +13,13 @@ func exactRaw(v int) *rawField {
 
 // mapGroups applies the shorthand ladder: it assigns each group's fields to the
 // seven roles, then fills defaults (specs/contracts/semantics.md §Ladder).
-func mapGroups(groups []rawGroup, secWild bool) (slots, error) {
+func mapGroups(groups []rawGroup, secWild, timeWild bool) (slots, error) {
 	var s slots
 	hasDate, hasTime := kinds(groups)
 	if err := assignGroups(&s, groups, hasDate && hasTime); err != nil {
 		return s, err
 	}
-	fillDefaults(&s, secWild)
+	fillDefaults(&s, secWild, timeWild)
 	return s, nil
 }
 

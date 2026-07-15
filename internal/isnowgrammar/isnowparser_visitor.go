@@ -16,6 +16,9 @@ type IsnowParserVisitor interface {
 	// Visit a parse tree produced by IsnowParser#boundOp.
 	VisitBoundOp(ctx *BoundOpContext) interface{}
 
+	// Visit a parse tree produced by IsnowParser#exclusion.
+	VisitExclusion(ctx *ExclusionContext) interface{}
+
 	// Visit a parse tree produced by IsnowParser#spec.
 	VisitSpec(ctx *SpecContext) interface{}
 

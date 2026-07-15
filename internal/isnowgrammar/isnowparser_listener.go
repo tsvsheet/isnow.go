@@ -16,6 +16,9 @@ type IsnowParserListener interface {
 	// EnterBoundOp is called when entering the boundOp production.
 	EnterBoundOp(c *BoundOpContext)
 
+	// EnterExclusion is called when entering the exclusion production.
+	EnterExclusion(c *ExclusionContext)
+
 	// EnterSpec is called when entering the spec production.
 	EnterSpec(c *SpecContext)
 
@@ -54,6 +57,9 @@ type IsnowParserListener interface {
 
 	// ExitBoundOp is called when exiting the boundOp production.
 	ExitBoundOp(c *BoundOpContext)
+
+	// ExitExclusion is called when exiting the exclusion production.
+	ExitExclusion(c *ExclusionContext)
 
 	// ExitSpec is called when exiting the spec production.
 	ExitSpec(c *SpecContext)

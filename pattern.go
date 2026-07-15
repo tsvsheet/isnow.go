@@ -8,6 +8,7 @@ type Pattern struct {
 	fields      [numRoles]fieldSpec
 	bounds      []boundSpec
 	intervals   []intervalSpec
+	exclusions  []exclusionSpec
 	canon       string
 	explanation string
 }
@@ -22,23 +23,27 @@ func Parse(src string) (Pattern, error) {
 	if err := validateUnits(raw); err != nil {
 		return Pattern{}, err
 	}
-	sl, err := mapGroups(raw.groups, hasSecondInterval(raw.intervals))
+	sl, err := mapGroups(raw.groups, hasSecondInterval(raw.intervals), false)
 	if err != nil {
 		return Pattern{}, err
 	}
-	return assemble(sl, raw.bounds, raw.intervals)
+	return assemble(sl, raw)
 }
 
-func assemble(sl slots, rawBounds []rawBound, rawIntervals []*rawIncr) (Pattern, error) {
+func assemble(sl slots, raw rawPattern) (Pattern, error) {
 	fields, err := compileAll(sl)
 	if err != nil {
 		return Pattern{}, err
 	}
-	bounds, err := compileBounds(rawBounds)
+	bounds, err := compileBounds(raw.bounds)
 	if err != nil {
 		return Pattern{}, err
 	}
-	intervals, err := compileIntervals(rawIntervals)
+	intervals, err := compileIntervals(raw.intervals)
+	if err != nil {
+		return Pattern{}, err
+	}
+	exclusions, err := compileExclusions(raw.exclusions)
 	if err != nil {
 		return Pattern{}, err
 	}
@@ -46,7 +51,8 @@ func assemble(sl slots, rawBounds []rawBound, rawIntervals []*rawIncr) (Pattern,
 		fields:      fields,
 		bounds:      bounds,
 		intervals:   intervals,
-		canon:       renderCanonical(sl, intervals, bounds),
+		exclusions:  exclusions,
+		canon:       renderCanonical(sl, intervals, bounds) + renderExclusions(exclusions),
 		explanation: renderExplain(sl, bounds),
 	}, nil
 }

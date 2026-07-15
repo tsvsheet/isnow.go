@@ -170,8 +170,8 @@ func anchorNum(a *rawAtom) (int, error) {
 	if a == nil || a.star {
 		return 0, nil
 	}
-	if a.name != "" {
-		return 0, ErrContext
+	if a.name != "" || len(a.qtys) != 1 || a.qtys[0].unit != "" {
+		return 0, ErrContext // a step anchor is a plain number, not a unit compound
 	}
 	v := a.qtys[0].num
 	if err := inDomain2(v); err != nil {

@@ -38,6 +38,12 @@ func (s *BaseIsnowParserListener) EnterBoundOp(ctx *BoundOpContext) {}
 // ExitBoundOp is called when production boundOp is exited.
 func (s *BaseIsnowParserListener) ExitBoundOp(ctx *BoundOpContext) {}
 
+// EnterExclusion is called when production exclusion is entered.
+func (s *BaseIsnowParserListener) EnterExclusion(ctx *ExclusionContext) {}
+
+// ExitExclusion is called when production exclusion is exited.
+func (s *BaseIsnowParserListener) ExitExclusion(ctx *ExclusionContext) {}
+
 // EnterSpec is called when production spec is entered.
 func (s *BaseIsnowParserListener) EnterSpec(ctx *SpecContext) {}
 

@@ -19,6 +19,10 @@ func (v *BaseIsnowParserVisitor) VisitBoundOp(ctx *BoundOpContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
+func (v *BaseIsnowParserVisitor) VisitExclusion(ctx *ExclusionContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
 func (v *BaseIsnowParserVisitor) VisitSpec(ctx *SpecContext) interface{} {
 	return v.VisitChildren(ctx)
 }
