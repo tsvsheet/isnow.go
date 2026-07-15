@@ -66,7 +66,7 @@ func compileBound(b rawBound) (boundSpec, error) {
 	if len(fields) == 0 {
 		return boundSpec{}, ErrContext // a bound must constrain something
 	}
-	return boundSpec{op: b.op, fields: fields, text: renderCanonical(sl, nil)}, nil
+	return boundSpec{op: b.op, fields: fields, text: renderCanonical(sl, nil, nil)}, nil
 }
 
 // mapBoundGroups maps a bound sub-spec's groups: date/time as usual, a bare

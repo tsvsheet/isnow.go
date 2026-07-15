@@ -7,6 +7,7 @@ import "time"
 type Pattern struct {
 	fields      [numRoles]fieldSpec
 	bounds      []boundSpec
+	intervals   []intervalSpec
 	canon       string
 	explanation string
 }
@@ -21,14 +22,14 @@ func Parse(src string) (Pattern, error) {
 	if err := validateUnits(raw); err != nil {
 		return Pattern{}, err
 	}
-	sl, err := mapGroups(raw.groups)
+	sl, err := mapGroups(raw.groups, hasSecondInterval(raw.intervals))
 	if err != nil {
 		return Pattern{}, err
 	}
-	return assemble(sl, raw.bounds)
+	return assemble(sl, raw.bounds, raw.intervals)
 }
 
-func assemble(sl slots, rawBounds []rawBound) (Pattern, error) {
+func assemble(sl slots, rawBounds []rawBound, rawIntervals []*rawIncr) (Pattern, error) {
 	fields, err := compileAll(sl)
 	if err != nil {
 		return Pattern{}, err
@@ -37,12 +38,37 @@ func assemble(sl slots, rawBounds []rawBound) (Pattern, error) {
 	if err != nil {
 		return Pattern{}, err
 	}
+	intervals, err := compileIntervals(rawIntervals)
+	if err != nil {
+		return Pattern{}, err
+	}
 	return Pattern{
 		fields:      fields,
 		bounds:      bounds,
-		canon:       renderCanonical(sl, bounds),
+		intervals:   intervals,
+		canon:       renderCanonical(sl, intervals, bounds),
 		explanation: renderExplain(sl, bounds),
 	}, nil
+}
+
+func compileIntervals(raw []*rawIncr) ([]intervalSpec, error) {
+	out := make([]intervalSpec, len(raw))
+	for i, in := range raw {
+		iv, err := compileInterval(in)
+		if err != nil {
+			return nil, err
+		}
+		out[i] = iv
+	}
+	return out, nil
+}
+
+func renderIntervals(ivs []intervalSpec) string {
+	s := ""
+	for _, iv := range ivs {
+		s += " " + iv.text
+	}
+	return s
 }
 
 func compileAll(sl slots) ([numRoles]fieldSpec, error) {

@@ -73,10 +73,11 @@ type rawBound struct {
 	groups []rawGroup
 }
 
-// rawPattern is the whole parse: the main groups plus any bounds.
+// rawPattern is the whole parse: the main groups, any bounds, and any intervals.
 type rawPattern struct {
-	groups []rawGroup
-	bounds []rawBound
+	groups    []rawGroup
+	bounds    []rawBound
+	intervals []*rawIncr
 }
 
 // errListener records the first syntax error so parsing yields ErrSyntax rather
@@ -111,10 +112,47 @@ func parseRaw(src string) (rawPattern, error) {
 	if !ok {
 		return rawPattern{}, ErrSyntax
 	}
+	groups, intervals := extractIntervals(specGroups(tree.Spec()))
 	return rawPattern{
-		groups: specGroups(tree.Spec()),
-		bounds: bounds(tree.AllBound()),
+		groups:    groups,
+		bounds:    bounds(tree.AllBound()),
+		intervals: intervals,
 	}, nil
+}
+
+// extractIntervals pulls out the bare interval groups (`+[90mn]`, `+[10d]`, …)
+// so they become pattern-level periodic constraints rather than field terms.
+func extractIntervals(groups []rawGroup) ([]rawGroup, []*rawIncr) {
+	var kept []rawGroup
+	var intervals []*rawIncr
+	for _, gr := range groups {
+		if in := intervalOf(gr); in != nil {
+			intervals = append(intervals, in)
+			continue
+		}
+		kept = append(kept, gr)
+	}
+	return kept, intervals
+}
+
+// intervalOf returns the interval increment if gr is a bare group holding a
+// single incr-only term with an interval unit (s/mn/h/d), else nil.
+func intervalOf(gr rawGroup) *rawIncr {
+	if gr.kind != bareKind {
+		return nil
+	}
+	f := gr.slots[0]
+	if !f.present || f.exclude || len(f.terms) != 1 {
+		return nil
+	}
+	t := f.terms[0]
+	if t.lo != nil || t.incr == nil || len(t.incr.qtys) != 1 {
+		return nil
+	}
+	if _, ok := intervalUnits[t.incr.qtys[0].unit]; !ok {
+		return nil
+	}
+	return t.incr
 }
 
 func bounds(ctxs []g.IBoundContext) []rawBound {

@@ -5,12 +5,13 @@ import (
 	"strings"
 )
 
-// renderCanonical renders the fully-qualified `Y/m/d w H:M:S` form plus bounds.
-func renderCanonical(sl slots, bounds []boundSpec) string {
+// renderCanonical renders the fully-qualified `Y/m/d w H:M:S` form, then any
+// intervals (they are main-spec groups, so they precede bounds), then bounds.
+func renderCanonical(sl slots, intervals []intervalSpec, bounds []boundSpec) string {
 	date := join(sl, "/", roleYear, roleMonth, roleDay)
 	tod := join(sl, ":", roleHour, roleMinute, roleSecond)
 	main := date + " " + fieldText(sl, roleWeekday) + " " + tod
-	return main + renderBounds(bounds)
+	return main + renderIntervals(intervals) + renderBounds(bounds)
 }
 
 func join(sl slots, sep string, roles ...role) string {

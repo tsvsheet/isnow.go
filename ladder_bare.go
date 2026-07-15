@@ -90,23 +90,25 @@ func hourFree(s *slots) bool {
 	return s[roleHour] == nil || !s[roleHour].present
 }
 
-// fillDefaults assigns wildcards and time defaults to unassigned roles.
-func fillDefaults(s *slots) {
+// fillDefaults assigns wildcards and time defaults to unassigned roles. secWild
+// makes an unprovided second default to wildcard (a second-grained interval owns
+// the second field) rather than to 0.
+func fillDefaults(s *slots, secWild bool) {
 	for _, r := range []role{roleYear, roleMonth, roleDay, roleWeekday} {
 		if s[r] == nil {
 			s[r] = &wildRaw
 		}
 	}
-	fillTimeDefaults(s)
+	fillTimeDefaults(s, secWild)
 }
 
 // fillTimeDefaults applies the time-default rule: when no time field is provided
 // at all, the time is *:*:00; otherwise unassigned time roles (always finer than
 // the coarsest provided one) default to 0.
-func fillTimeDefaults(s *slots) {
+func fillTimeDefaults(s *slots, secWild bool) {
 	roles := []role{roleHour, roleMinute, roleSecond}
 	if !anyProvided(s, roles) {
-		s[roleHour], s[roleMinute], s[roleSecond] = &wildRaw, &wildRaw, exactRaw(0)
+		s[roleHour], s[roleMinute], s[roleSecond] = &wildRaw, &wildRaw, defaultSecond(secWild)
 		return
 	}
 	for _, r := range roles {
@@ -114,6 +116,13 @@ func fillTimeDefaults(s *slots) {
 			s[r] = exactRaw(0)
 		}
 	}
+}
+
+func defaultSecond(secWild bool) *rawField {
+	if secWild {
+		return &wildRaw
+	}
+	return exactRaw(0)
 }
 
 func anyProvided(s *slots, roles []role) bool {
