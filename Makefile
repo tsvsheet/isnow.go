@@ -14,6 +14,15 @@ ifeq ($(GOBIN),)
 GOBIN := $(shell go env GOPATH)/bin
 endif
 
+# The conformance corpus is the cross-implementation oracle; it lives in the
+# sibling grammar repo (uplang/isnow). Locally that is the checked-out sibling;
+# in CI — a lone checkout of this repo — it is absent, so fetch the public
+# grammar repo once so the conformance suite runs and coverage is complete.
+CORPUS := ../isnow/conformance
+
+$(CORPUS):
+	git clone --depth 1 https://github.com/uplang/isnow ../isnow
+
 # Owned packages and files: everything except the generated parser tree.
 OWNED_PKGS := $(shell go list ./... | grep -v /internal/isnowgrammar)
 GO_SRC     := $(shell find . -name '*.go' -not -path './internal/isnowgrammar/*' -not -name '*_test.go')
@@ -32,7 +41,7 @@ grammars: ## Regenerate internal/isnowgrammar/ from ../isnow (needs Docker)
 
 check: fmt vet staticcheck gocognit vuln cover release-check ## Full quality gate
 
-test: ## Run the conformance corpus and unit suites
+test: $(CORPUS) ## Run the conformance corpus and unit suites
 	go test $(OWNED_PKGS)
 
 build: ## Build the isnow binary
@@ -53,7 +62,7 @@ gocognit: ## cognitive complexity <= 7 (production files)
 vuln: ## govulncheck
 	$(GOBIN)/govulncheck $(OWNED_PKGS)
 
-cover: ## tests with 100% statement coverage of owned packages
+cover: $(CORPUS) ## tests with 100% statement coverage of owned packages
 	go test -covermode=set -coverpkg=$(COVERPKG) -coverprofile=cover.out $(OWNED_PKGS)
 	@go tool cover -func=cover.out | grep -q '^total:.*100.0%' || { go tool cover -func=cover.out | tail -1; echo "coverage below 100%"; exit 1; }
 
