@@ -1,4 +1,4 @@
 # Anti-rot exemption ledger (nicerobot/tools.build/standards/capabilities.yaml).
 # Exemptions must shrink toward zero.
 exempt:
-  artifact:makefile: "bespoke gate over owned packages only, excluding the committed generated ANTLR tree (internal/isnowgrammar); the shared Makefile runs `go vet ./...` which cannot exclude it. Same rationale as sibling up.go. See specs/decisions/003-generated-tree.md."
+  gate:lint: "yze conformance backlog — 244 findings at shared-gate adoption 2026-07-16 (namedtypes/ptrparam/boolname API-shape refactor across the parser); task 14 in the agent queue owns the burn-down. The ratchet hard-fails this entry the moment lint passes."
