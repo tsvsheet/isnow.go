@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
-	isnow "github.com/uplang/isnow.go"
-	"github.com/uplang/isnow.go/internal/app"
-	"github.com/uplang/isnow.go/internal/constants"
+	isnow "github.com/tsvsheet/isnow.go"
+	"github.com/tsvsheet/isnow.go/internal/app"
+	"github.com/tsvsheet/isnow.go/internal/constants"
 )
 
 func mustTime(t *testing.T, s string) time.Time {

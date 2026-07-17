@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/uplang/isnow.go/internal/constants"
+	"github.com/tsvsheet/isnow.go/internal/constants"
 )
 
 func TestParseZone(t *testing.T) {

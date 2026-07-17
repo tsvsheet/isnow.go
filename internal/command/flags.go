@@ -5,7 +5,7 @@ import (
 
 	"github.com/urfave/cli/v3"
 
-	"github.com/uplang/isnow.go/internal/app"
+	"github.com/tsvsheet/isnow.go/internal/app"
 )
 
 func tzFlag(dst *string) cli.Flag {

@@ -3,7 +3,7 @@ package domain
 import (
 	"strings"
 
-	"github.com/uplang/isnow.go/internal/constants"
+	"github.com/tsvsheet/isnow.go/internal/constants"
 )
 
 // ParseNowtab reads nowtab text into entries: each non-blank, non-comment line

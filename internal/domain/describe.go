@@ -1,6 +1,6 @@
 package domain
 
-import isnow "github.com/uplang/isnow.go"
+import isnow "github.com/tsvsheet/isnow.go"
 
 // Canon returns the canonical form of src.
 func Canon(src string) (string, error) {

@@ -1,5 +1,5 @@
 // Command isnow tests, derives, explains, schedules, and serves isnow (DTimpalr)
-// date/time patterns. See https://uplang.github.io/docs.isnow.go/.
+// date/time patterns. See https://tsvsheet.github.io/docs.isnow.go/.
 package main
 
 import (
@@ -8,8 +8,8 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/uplang/isnow.go/internal/app"
-	"github.com/uplang/isnow.go/internal/command"
+	"github.com/tsvsheet/isnow.go/internal/app"
+	"github.com/tsvsheet/isnow.go/internal/command"
 )
 
 var (

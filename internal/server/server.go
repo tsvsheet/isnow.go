@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/uplang/isnow.go/internal/app"
+	"github.com/tsvsheet/isnow.go/internal/app"
 )
 
 // Server serves the isnow HTTP API with an injected clock and sleeper.

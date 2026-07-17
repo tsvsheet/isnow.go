@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"strings"
 
-	isnow "github.com/uplang/isnow.go"
+	isnow "github.com/tsvsheet/isnow.go"
 )
 
 // BuildFields is the builder's per-field input (raw field-algebra text; empty

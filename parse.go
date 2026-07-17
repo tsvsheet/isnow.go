@@ -3,7 +3,7 @@ package isnow
 import (
 	"github.com/antlr4-go/antlr/v4"
 
-	g "github.com/uplang/isnow.go/internal/isnowgrammar"
+	g "github.com/tsvsheet/isnow.go/internal/isnowgrammar"
 )
 
 // groupKind distinguishes the three group shapes the grammar produces.

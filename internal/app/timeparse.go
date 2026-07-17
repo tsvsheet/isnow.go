@@ -5,7 +5,7 @@ package app
 import (
 	"time"
 
-	"github.com/uplang/isnow.go/internal/constants"
+	"github.com/tsvsheet/isnow.go/internal/constants"
 )
 
 // timeLayouts are accepted for instant arguments, interpreted in the evaluation

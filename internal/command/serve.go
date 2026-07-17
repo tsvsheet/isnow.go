@@ -9,8 +9,8 @@ import (
 
 	"github.com/urfave/cli/v3"
 
-	"github.com/uplang/isnow.go/internal/app"
-	"github.com/uplang/isnow.go/internal/server"
+	"github.com/tsvsheet/isnow.go/internal/app"
+	"github.com/tsvsheet/isnow.go/internal/server"
 )
 
 // serveRun is the server runner, indirected so tests can substitute a stub.

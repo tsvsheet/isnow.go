@@ -3,7 +3,7 @@ package isnow
 import (
 	"strconv"
 
-	g "github.com/uplang/isnow.go/internal/isnowgrammar"
+	g "github.com/tsvsheet/isnow.go/internal/isnowgrammar"
 )
 
 // field builds a present field: an optional '!' exclusion over its terms.

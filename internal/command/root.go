@@ -6,7 +6,7 @@ import (
 
 	"github.com/urfave/cli/v3"
 
-	"github.com/uplang/isnow.go/internal/app"
+	"github.com/tsvsheet/isnow.go/internal/app"
 )
 
 // Root builds the isnow command tree bound to env. Exit-code handling is left to

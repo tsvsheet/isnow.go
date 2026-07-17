@@ -1,4 +1,4 @@
-module github.com/uplang/isnow.go
+module github.com/tsvsheet/isnow.go
 
 go 1.26.4
 

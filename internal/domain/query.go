@@ -6,7 +6,7 @@ import (
 	"context"
 	"time"
 
-	isnow "github.com/uplang/isnow.go"
+	isnow "github.com/tsvsheet/isnow.go"
 )
 
 // Verdict is the outcome of the membership test.

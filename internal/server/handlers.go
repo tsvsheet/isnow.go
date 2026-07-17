@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/uplang/isnow.go/internal/domain"
+	"github.com/tsvsheet/isnow.go/internal/domain"
 )
 
 // maxN caps derivation requests.

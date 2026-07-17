@@ -1,7 +1,7 @@
 // Package isnow implements the DTimpalr date/time pattern language: an isnow
 // holds at an instant when every field constraint is satisfied. The defining
 // operation is the membership test, Pattern.Holds(at); Next/Prev derive
-// occurrences from it. See github.com/uplang/isnow (SPECIFICATION.md) for the
+// occurrences from it. See github.com/tsvsheet/isnow (SPECIFICATION.md) for the
 // language and specs/contracts/ for the pinned semantics.
 package isnow
 

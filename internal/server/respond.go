@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	isnow "github.com/uplang/isnow.go"
+	isnow "github.com/tsvsheet/isnow.go"
 )
 
 // checkBody is the JSON of the /v1/check response.

@@ -6,9 +6,9 @@ import (
 
 	"github.com/urfave/cli/v3"
 
-	"github.com/uplang/isnow.go/internal/app"
-	"github.com/uplang/isnow.go/internal/constants"
-	"github.com/uplang/isnow.go/internal/domain"
+	"github.com/tsvsheet/isnow.go/internal/app"
+	"github.com/tsvsheet/isnow.go/internal/constants"
+	"github.com/tsvsheet/isnow.go/internal/domain"
 )
 
 // waitCommand blocks until the next occurrence, then exits 0.

@@ -7,8 +7,8 @@ import (
 
 	"github.com/urfave/cli/v3"
 
-	"github.com/uplang/isnow.go/internal/app"
-	"github.com/uplang/isnow.go/internal/domain"
+	"github.com/tsvsheet/isnow.go/internal/app"
+	"github.com/tsvsheet/isnow.go/internal/domain"
 )
 
 // deriveCommand builds `next` or `prev`: print occurrences, one RFC 3339 per line.

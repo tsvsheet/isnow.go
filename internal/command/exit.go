@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"io"
 
-	isnow "github.com/uplang/isnow.go"
-	"github.com/uplang/isnow.go/internal/constants"
+	isnow "github.com/tsvsheet/isnow.go"
+	"github.com/tsvsheet/isnow.go/internal/constants"
 )
 
 // Report writes a diagnostic for err (unless it is nil or the silent

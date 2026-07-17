@@ -8,10 +8,10 @@ VET_PKGS         = $(shell go list ./... | grep -v /internal/isnowgrammar)
 STATICCHECK_PKGS = $(shell go list ./... | grep -v /internal/isnowgrammar)
 
 # The conformance corpus is the cross-implementation oracle; it lives in the
-# sibling grammar repo (uplang/isnow). Locally that is the checked-out sibling;
+# sibling grammar repo (tsvsheet/isnow). Locally that is the checked-out sibling;
 # in CI — a lone checkout of this repo — it is absent, so fetch it once.
 ../isnow/conformance:
-	git clone --depth 1 https://github.com/uplang/isnow ../isnow
+	git clone --depth 1 https://github.com/tsvsheet/isnow ../isnow
 
 test: ../isnow/conformance
 test-all: ../isnow/conformance
