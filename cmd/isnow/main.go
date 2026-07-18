@@ -17,6 +17,9 @@ var (
 	args   = os.Args
 )
 
+// version is the application version, set via ldflags: -X main.version=1.0.0.
+var version = "dev"
+
 func main() { osExit(run(args)) }
 
 // run builds the command tree with the real environment and maps the result to
@@ -31,5 +34,7 @@ func run(args []string) int {
 		Sleep: app.RealSleep,
 		Spawn: app.RealSpawn,
 	}
-	return command.Report(env.Err, command.Root(env).Run(ctx, args))
+	root := command.Root(env)
+	root.Version = version
+	return command.Report(env.Err, root.Run(ctx, args))
 }

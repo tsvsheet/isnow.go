@@ -11,6 +11,14 @@ func TestRun(t *testing.T) {
 	}
 }
 
+func TestRun_Version(t *testing.T) {
+	// --version is wired from main.version (ldflags) onto the root command and
+	// must succeed; urfave/cli prints the version and returns cleanly.
+	if code := run([]string{"isnow", "--version"}); code != 0 {
+		t.Fatalf("run --version = %d", code)
+	}
+}
+
 func TestMain_Exits(t *testing.T) {
 	old := osExit
 	defer func() { osExit = old }()
