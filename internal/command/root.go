@@ -15,7 +15,7 @@ func Root(env *app.Env) *cli.Command {
 	root := query(env) // the default command is the membership test
 	root.Name = "isnow"
 	root.Usage = "match instants against isnow date/time patterns"
-	root.Description = "isnow tests, derives, explains, schedules, and serves DTimpalr patterns."
+	root.Description = "isnow tests, derives, explains, schedules, and serves isnow patterns."
 	root.EnableShellCompletion = true
 	root.Writer = env.Out
 	root.ErrWriter = env.Err

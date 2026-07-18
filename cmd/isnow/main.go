@@ -1,4 +1,4 @@
-// Command isnow tests, derives, explains, schedules, and serves isnow (DTimpalr)
+// Command isnow tests, derives, explains, schedules, and serves isnow
 // date/time patterns. See https://tsvsheet.github.io/docs.isnow.go/.
 package main
 
