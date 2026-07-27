@@ -3,8 +3,8 @@ module github.com/tsvsheet/isnow.go
 go 1.26.4
 
 require (
-	github.com/gomatic/go-error v0.3.7
-	github.com/tsvsheet/go-isnow v0.1.2
+	github.com/gomatic/go-error v0.3.10
+	github.com/tsvsheet/go-isnow v0.1.6
 	github.com/urfave/cli/v3 v3.10.1
 )
 
