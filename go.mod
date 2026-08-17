@@ -3,12 +3,12 @@ module github.com/tsvsheet/isnow.go
 go 1.26.4
 
 require (
-	github.com/gomatic/go-error v0.3.14
-	github.com/tsvsheet/go-isnow v0.1.9
+	github.com/gomatic/go-error v0.3.15
+	github.com/tsvsheet/go-isnow v0.1.12
 	github.com/urfave/cli/v3 v3.10.1
 )
 
 require (
 	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
-	golang.org/x/exp v0.0.0-20240506185415-9bf2ced13842 // indirect
+	golang.org/x/exp v0.0.0-20260727155853-b88d891fe743 // indirect
 )
