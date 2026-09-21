@@ -5,7 +5,7 @@ go 1.26.4
 require (
 	github.com/gomatic/go-error v0.3.18
 	github.com/tsvsheet/go-isnow v0.1.12
-	github.com/urfave/cli/v3 v3.11.0
+	github.com/urfave/cli/v3 v3.12.0
 )
 
 require (
